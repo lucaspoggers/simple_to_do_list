@@ -1,6 +1,6 @@
 const taskInput = document.querySelector(".task-input");
 const btnTask = document.querySelector(".btn-task");
-const tasks = document.querySelector(".tasks");
+const taskList = document.querySelector(".tasks");
 
 function createListElement() {
   const li = document.createElement("li");
@@ -19,9 +19,10 @@ function createDeleteButton(li) {
 function createTask(inputText) {
   const li = createListElement();
   li.innerText = inputText;
-  tasks.appendChild(li);
+  taskList.appendChild(li);
   clearInput();
   createDeleteButton(li);
+  saveTasks();
 }
 
 function clearInput() {
@@ -46,5 +47,31 @@ document.addEventListener("click", (e) => {
 
   if (element.classList.contains("delete")) {
     element.parentElement.remove();
+    saveTasks();
   }
 });
+
+function saveTasks() {
+  const tasks = taskList.querySelectorAll("li");
+  const taskArr = [];
+
+  for (let task of tasks) {
+    let taskText = task.innerText;
+    taskText = taskText.replace("Apagar", "").trim();
+    taskArr.push(taskText);
+  }
+
+  const tasksJSON = JSON.stringify(taskArr);
+  localStorage.setItem("tasks", tasksJSON);
+}
+
+function loadTasks() {
+  const tasks = localStorage.getItem("tasks");
+  const taskArr = JSON.parse(tasks);
+
+  for (let task of taskArr) {
+    createTask(task);
+  }
+}
+
+loadTasks();
